@@ -24,7 +24,16 @@ namespace NzbDrone.Core.MetadataSource.Goodreads
             _cachedHttpClient = cachedHttpClient;
             _logger = logger;
 
-            _searchBuilder = new HttpRequestBuilder("http://localhost:3000/bookinfo/v1/search")
+            var url = Environment.GetEnvironmentVariable("READARR_METADATA_URL");
+            if (url == "")
+            {
+                url = "https://www.goodreads.com";
+            }
+
+            _searchBuilder = new HttpRequestBuilder(url + "/book/auto_complete")
+                .AddQueryParam("format", "json")
+                .SetHeader("User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
                 .KeepAlive()
                 .CreateFactory();
         }
